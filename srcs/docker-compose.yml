@@ -1,35 +1,4 @@
-version: "3.9"
-
 services:
-  nginx:
-    build: ./requirements/nginx
-    container_name: nginx
-    ports:
-      - "443:443"
-    volumes:
-      - wordpress_files:/var/www/html
-    networks:
-      - inception
-    depends_on:
-      - wordpress
-    restart: always
-
-  wordpress:
-    build: ./requirements/wordpress
-    container_name: wordpress
-    environment:
-      WORDPRESS_DB_HOST: mariadb:3306
-      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
-      WORDPRESS_DB_USER: ${MYSQL_USER}
-      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
-    volumes:
-      - wordpress_files:/var/www/html
-    networks:
-      - inception
-    depends_on:
-      - mariadb
-    restart: always
-
   mariadb:
     build: ./requirements/mariadb
     container_name: mariadb
@@ -38,29 +7,29 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    volumes:
-      - mariadb_data:/var/lib/mysql
-    networks:
-      - inception
-    restart: always
+    ports:
+      - "3306:3306"
+
+  wordpress:
+    build: ./requirements/wordpress
+    container_name: wordpress
+    environment:
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+      WORDPRESS_DB_NAME: ${WORDPRESS_DB_NAME}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD}
     expose:
-      - "3306"
+      - "9000"
+    depends_on:
+      - mariadb
 
-volumes:
-  mariadb_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/${USER}/data/mariadb
-
-  wordpress_files:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/${USER}/data/wordpress
-
-networks:
-  inception:
-    driver: bridge
+  nginx:
+    build: ./requirements/nginx
+    container_name: nginx
+    ports:
+      - "${NGINX_PORT}:443"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/certs:/etc/nginx/certs
+    depends_on:
+      - wordpress
