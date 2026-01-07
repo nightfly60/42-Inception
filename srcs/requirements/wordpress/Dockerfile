@@ -9,6 +9,4 @@ COPY conf/php-fpm.conf /usr/local/etc/php-fpm.d/zz-custom.conf
 # Droits WordPress
 RUN chown -R www-data:www-data /var/www/html
 
-EXPOSE 9000
-
 CMD ["php-fpm"]
