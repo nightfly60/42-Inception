@@ -8,6 +8,7 @@ services:
       - wp_network
     volumes:
       - db_data:/var/lib/mysql
+    restart: always
 
   wordpress:
     build: ./requirements/wordpress
@@ -20,6 +21,7 @@ services:
       - wp_data:/var/www/html
     depends_on:
       - mariadb
+    restart: always
 
   nginx:
     build: ./requirements/nginx
@@ -34,6 +36,7 @@ services:
       - wp_data:/var/www/html
     depends_on:
       - wordpress
+    restart: always
 
 volumes:
   db_data:
