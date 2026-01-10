@@ -3,14 +3,12 @@ set -e
 
 # si la db existe pas on va la créer
 if [ ! -d "/var/lib/mysql/mysql" ]; then
+    echo "Initializing MariaDB..."
 
     mysql_install_db --user=mysql --datadir=/var/lib/mysql
 
-    mysqld_safe --skip-networking &
-    pid="$!"
-    sleep 5
-
-    mysql -u root <<EOF
+    mysqld --user=mysql --datadir=/var/lib/mysql --bootstrap <<EOF
+FLUSH PRIVILEGES;
 
 -- création d'un password pour le root
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
@@ -25,12 +23,7 @@ CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';
 GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';
 
 FLUSH PRIVILEGES;
-
 EOF
-
-    mysqladmin -u root -p"${MYSQL_ROOT_PASSWORD}" shutdown
-    wait "$pid"
-
 fi
 
 exec mysqld_safe --user=mysql --console
