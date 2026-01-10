@@ -7,6 +7,9 @@ all:
 down:
 	cd srcs/ && docker-compose down
 
+clean:
+	cd srcs/ && docker-compose down -v
+
 re: down all
 
-.PHONY : all down re
+.PHONY : all down clean re

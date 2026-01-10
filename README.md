@@ -30,6 +30,7 @@ Then, you can use the following commands to run and stop the containers.
 ```
 make # start the containers
 make down # stop the containers
+make clean # stop the containers and remove the volumes
 make re # down and up
 ```
 
