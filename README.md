@@ -1,5 +1,3 @@
-This project has been created as part of the 42 curriculum by edurance (elena).
-
 Description:
 Inception aims to create an administration system using Docker. The goal is to use containers and deploy several services using Docker images in order to ensure
 modularity and ease of deployment. The project involves building and configuring Docker images for different servces: nginx (web server),
